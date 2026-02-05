@@ -14,7 +14,7 @@
 *.ipr
 *.iws
 .idea/
-
+.vscode/
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
@@ -33,7 +33,7 @@
 build/
 local_example/
 local/
-
+.dart_tool/
 # Windows related
 **/windows/
 
@@ -80,4 +80,4 @@ local/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-.fvm/flutter_sdk
+.fvm/

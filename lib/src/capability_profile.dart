@@ -1,4 +1,4 @@
-import 'dart:convert' show json, utf8;
+import 'dart:convert' show json;
 import 'package:flutter/services.dart' show rootBundle;
 
 List<Map> printProfiles = [];
@@ -21,7 +21,8 @@ class CapabilityProfile {
     /// else do nothing
     if (printCapabilities.isEmpty == true) {
       final content = await rootBundle.loadString(
-          path ?? 'packages/esc_pos_utils_plus/resources/capabilities.json');
+        path ?? 'packages/esc_pos_utils_plus/resources/capabilities.json',
+      );
       var _capabilities = json.decode(content);
       printCapabilities = Map.from(_capabilities);
 
@@ -70,11 +71,15 @@ class CapabilityProfile {
     }
 
     return codePages
-        .firstWhere((cp) => cp.name == codePage,
-            // ignore: unnecessary_cast
-            orElse: (() => throw Exception(
-                    "Code Page '$codePage' isn't defined for this profile"))
-                as CodePage Function()?)
+        .firstWhere(
+          (cp) => cp.name == codePage,
+          // ignore: unnecessary_cast
+          orElse:
+              (() => throw Exception(
+                    "Code Page '$codePage' isn't defined for this profile",
+                  ))
+                  as CodePage Function()?,
+        )
         .id;
   }
 

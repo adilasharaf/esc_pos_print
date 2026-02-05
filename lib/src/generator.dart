@@ -6,8 +6,12 @@ import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'commands.dart';
 
 class Generator {
-  Generator(this._paperSize, this._profile,
-      {this.spaceBetweenRows = 5, this.codec = latin1});
+  Generator(
+    this._paperSize,
+    this._profile, {
+    this.spaceBetweenRows = 5,
+    this.codec = latin1,
+  });
 
   // Ticket config
   final PaperSize _paperSize;
@@ -114,7 +118,8 @@ class Generator {
     }
     if (value < 0 || value > maxInput) {
       throw Exception(
-          'Number is too large. Can only output up to $maxInput in $bytesNb bytes');
+        'Number is too large. Can only output up to $maxInput in $bytesNb bytes',
+      );
     }
 
     final List<int> res = <int>[];
@@ -138,8 +143,12 @@ class Generator {
     final int heightPx = image.height;
 
     // Create a black bottom layer
-    final biggerImage = copyResize(image,
-        width: widthPx, height: heightPx, interpolation: Interpolation.linear);
+    final biggerImage = copyResize(
+      image,
+      width: widthPx,
+      height: heightPx,
+      interpolation: Interpolation.linear,
+    );
     //fill(biggerImage, color: ColorRgb8(0, 0, 0));
     fill(biggerImage, color: ColorRgb8(0, 0, 0));
     // Insert source image into bigger one
@@ -149,11 +158,17 @@ class Generator {
     final List<List<int>> blobs = [];
 
     while (left < widthPx) {
-      final Image slice = copyCrop(biggerImage,
-          x: left, y: 0, width: lineHeight, height: heightPx);
+      final Image slice = copyCrop(
+        biggerImage,
+        x: left,
+        y: 0,
+        width: lineHeight,
+        height: heightPx,
+      );
       if (slice.numChannels > 2) grayscale(slice);
-      final imgBinary =
-          (slice.numChannels > 1) ? slice.convert(numChannels: 1) : slice;
+      final imgBinary = (slice.numChannels > 1)
+          ? slice.convert(numChannels: 1)
+          : slice;
       final bytes = imgBinary.getBytes();
       blobs.add(bytes);
       left += lineHeight;
@@ -247,7 +262,8 @@ class Generator {
   /// Clear the buffer and reset text styles
   List<int> clearStyle() {
     return setStyles(
-        const PosStyles(height: PosTextSize.size1, width: PosTextSize.size1));
+      const PosStyles(height: PosTextSize.size1, width: PosTextSize.size1),
+    );
   }
 
   /// Set global code table which will be used instead of the default printer's code table
@@ -280,9 +296,11 @@ class Generator {
   List<int> setStyles(PosStyles styles, {bool isKanji = false}) {
     List<int> bytes = [];
     if (styles.align != _styles.align) {
-      bytes += codec.encode(styles.align == PosAlign.left
-          ? cAlignLeft
-          : (styles.align == PosAlign.center ? cAlignCenter : cAlignRight));
+      bytes += codec.encode(
+        styles.align == PosAlign.left
+            ? cAlignLeft
+            : (styles.align == PosAlign.center ? cAlignCenter : cAlignRight),
+      );
       _styles = _styles.copyWith(align: styles.align);
     }
 
@@ -299,8 +317,9 @@ class Generator {
       _styles = _styles.copyWith(reverse: styles.reverse);
     }
     if (styles.underline != _styles.underline) {
-      bytes +=
-          styles.underline ? cUnderline1dot.codeUnits : cUnderlineOff.codeUnits;
+      bytes += styles.underline
+          ? cUnderline1dot.codeUnits
+          : cUnderlineOff.codeUnits;
       _styles = _styles.copyWith(underline: styles.underline);
     }
 
@@ -338,8 +357,10 @@ class Generator {
         List.from(cCodeTable.codeUnits)
           ..add(_profile.getCodePageId(styles.codeTable)),
       );
-      _styles =
-          _styles.copyWith(align: styles.align, codeTable: styles.codeTable);
+      _styles = _styles.copyWith(
+        align: styles.align,
+        codeTable: styles.codeTable,
+      );
     } else if (_codeTable != null) {
       bytes += Uint8List.fromList(
         List.from(cCodeTable.codeUnits)
@@ -401,9 +422,7 @@ class Generator {
   List<int> feed(int n) {
     List<int> bytes = [];
     if (n >= 0 && n <= 255) {
-      bytes += Uint8List.fromList(
-        List.from(cFeedN.codeUnits)..add(n),
-      );
+      bytes += Uint8List.fromList(List.from(cFeedN.codeUnits)..add(n));
     }
     return bytes;
   }
@@ -446,8 +465,10 @@ class Generator {
   /// Beeps [n] times
   ///
   /// Beep [duration] could be between 50 and 450 ms.
-  List<int> beep(
-      {int n = 3, PosBeepDuration duration = PosBeepDuration.beep450ms}) {
+  List<int> beep({
+    int n = 3,
+    PosBeepDuration duration = PosBeepDuration.beep450ms,
+  }) {
     List<int> bytes = [];
     if (n <= 0) {
       return [];
@@ -469,9 +490,7 @@ class Generator {
   /// Reverse feed for [n] lines (if supported by the printer)
   List<int> reverseFeed(int n) {
     List<int> bytes = [];
-    bytes += Uint8List.fromList(
-      List.from(cReverseFeedN.codeUnits)..add(n),
-    );
+    bytes += Uint8List.fromList(List.from(cReverseFeedN.codeUnits)..add(n));
     return bytes;
   }
 
@@ -489,8 +508,9 @@ class Generator {
     List<PosColumn> nextRow = <PosColumn>[];
 
     for (int i = 0; i < cols.length; ++i) {
-      int colInd =
-          cols.sublist(0, i).fold(0, (int sum, col) => sum + col.width);
+      int colInd = cols
+          .sublist(0, i)
+          .fold(0, (int sum, col) => sum + col.width);
       double charWidth = _getCharWidth(cols[i].styles);
       double fromPos = _colIndToPosition(colInd);
       final double toPos =
@@ -508,18 +528,23 @@ class Generator {
           int realCharactersNb = encodedToPrint.length;
           if (realCharactersNb > maxCharactersNb) {
             // Print max possible and split to the next row
-            Uint8List encodedToPrintNextRow =
-                encodedToPrint.sublist(maxCharactersNb);
+            Uint8List encodedToPrintNextRow = encodedToPrint.sublist(
+              maxCharactersNb,
+            );
             encodedToPrint = encodedToPrint.sublist(0, maxCharactersNb);
             isNextRow = true;
-            nextRow.add(PosColumn(
+            nextRow.add(
+              PosColumn(
                 textEncoded: encodedToPrintNextRow,
                 width: cols[i].width,
-                styles: cols[i].styles));
+                styles: cols[i].styles,
+              ),
+            );
           } else {
             // Insert an empty col
-            nextRow.add(PosColumn(
-                text: '', width: cols[i].width, styles: cols[i].styles));
+            nextRow.add(
+              PosColumn(text: '', width: cols[i].width, styles: cols[i].styles),
+            );
           }
         }
         // end rows splitting
@@ -547,15 +572,19 @@ class Generator {
 
         if (toPrintNextRow.isNotEmpty) {
           isNextRow = true;
-          nextRow.add(PosColumn(
+          nextRow.add(
+            PosColumn(
               text: toPrintNextRow,
               containsChinese: true,
               width: cols[i].width,
-              styles: cols[i].styles));
+              styles: cols[i].styles,
+            ),
+          );
         } else {
           // Insert an empty col
-          nextRow.add(PosColumn(
-              text: '', width: cols[i].width, styles: cols[i].styles));
+          nextRow.add(
+            PosColumn(text: '', width: cols[i].width, styles: cols[i].styles),
+          );
         }
 
         // Print current row
@@ -590,8 +619,11 @@ class Generator {
   /// Print an image using (ESC *) command
   ///
   /// [image] is an instance of class from [Image library](https://pub.dev/packages/image)
-  List<int> image(Image imgSrc,
-      {PosAlign align = PosAlign.center, bool isDoubleDensity = true}) {
+  List<int> image(
+    Image imgSrc, {
+    PosAlign align = PosAlign.center,
+    bool isDoubleDensity = true,
+  }) {
     List<int> bytes = [];
     // Image alignment
     bytes += setStyles(const PosStyles().copyWith(align: align));
@@ -605,8 +637,11 @@ class Generator {
         size = 512 ~/ 2;
       }
 
-      image =
-          copyResize(imgSrc, width: size, interpolation: Interpolation.linear);
+      image = copyResize(
+        imgSrc,
+        width: size,
+        interpolation: Interpolation.linear,
+      );
     } else {
       image = Image.from(imgSrc); // make a copy
     }
@@ -819,8 +854,10 @@ class Generator {
   }) {
     List<int> bytes = [];
     if (colInd != null) {
-      double charWidth =
-          _getCharWidth(styles, maxCharsPerLine: maxCharsPerLine);
+      double charWidth = _getCharWidth(
+        styles,
+        maxCharsPerLine: maxCharsPerLine,
+      );
       double fromPos = _colIndToPosition(colInd);
 
       // Align
@@ -884,5 +921,6 @@ class Generator {
     bytes += emptyLines(linesAfter + 1);
     return bytes;
   }
-// ************************ (end) Internal command generators ************************
+
+  // ************************ (end) Internal command generators ************************
 }
