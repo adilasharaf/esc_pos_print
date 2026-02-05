@@ -5,7 +5,7 @@ extension EscPOSUtilsStringExt on String {
     for (int i = 0; i < this.length; i += length) {
       int offset = i + length;
       String piece = substring(i, offset >= this.length ? this.length : offset);
-      
+
       if (ignoreEmpty) {
         piece = piece.replaceAll(RegExp(r'\s+'), '');
       }
@@ -23,7 +23,10 @@ extension EscPOSUtilsIntExt on List<int> {
     for (int i = 0; i < this.length; i += length) {
       int offset = i + length;
 
-      List<int> piece = sublist(i, offset >= this.length ? this.length : offset);
+      List<int> piece = sublist(
+        i,
+        offset >= this.length ? this.length : offset,
+      );
 
       pieces.add(piece);
     }

@@ -3,11 +3,10 @@
 import 'dart:async';
 import 'dart:ffi';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:win32/win32.dart';
 import 'package:ffi/ffi.dart';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'platform_service_interface.dart';
 
@@ -135,7 +134,9 @@ class PlatformService extends PlatformServiceInterface {
       socket.destroy();
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
   }

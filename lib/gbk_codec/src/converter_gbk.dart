@@ -42,7 +42,7 @@ List<int> gbkEncode(String input) {
     var gbkCode = _char_to_gbkCode[char];
     if (gbkCode != null) {
       ret.add(gbkCode);
-    } else if (charCode != null) {
+    } else {
       ret.add(charCode);
     }
   });
